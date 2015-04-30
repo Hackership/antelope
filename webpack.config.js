@@ -11,8 +11,7 @@ module.exports = {
 
   output: {
     filename: '[name].js',
-    path: 'assets',
-    publicPath: '/assets/'
+    path: 'assets/',
   },
 
   cache: true,
@@ -71,6 +70,13 @@ module.exports = {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin()
-  ]
+  ],
+
+  devServer: {
+    contentBase: "assets/",
+    proxy : {"/antelope/*": "http://127.0.0.1:5984/antelope/"},
+    progress: true,
+    stats: {colors: true, }
+  }
 
 };
