@@ -1,0 +1,44 @@
+.DS_Store
+*.db
+flask/
+*.pyc
+test_post.py
+test_app.py
+local_config.py
+### SublimeText ###
+*.sublime-workspace
+build_sample_set_of_slots.py
+test_full_run.py
+test_inbound_email.py
+
+### OSX ###
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+### Windows ###
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# App specific
+
+node_modules/
+.tmp
+dist
+/src/scripts/main.js
+/assets
