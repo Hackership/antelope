@@ -1,18 +1,51 @@
 
-var React = require("react");
+// libs
+let React = require("react"),
+    {Container, Button} = require("react-bootstrap"),
+    {Route, run, RouteHandler} = require("react-router");
 
-var AntilopePath = require("./assets/images/antilope.svg");
-var CENTER = {'max-height': '100vh', 'max-width': '100vw', 'margin': 'auto auto'};
+// internals
+import {ForceLogin, LoginScreen} from "./Components/ForceLogin"
+// import sessionStore from './stores/Session';
+// import sessionActions from './actions/Session';
 
-var Meeeh = React.createClass({
+let AntilopePath = require("./assets/images/antilope.svg"),
+    CENTER = {'maxHeight': '100vh', 'maxWidth': '100vw',
+              'margin': 'auto auto'};
+
+let Meeeh = React.createClass({
     render: function(){
         return (
-            <div style={{'text-align': 'center'}}>
-                <img src={AntilopePath} style={CENTER} alt="Meeeehhh" />
-            </div>
+                <div style={{'textAlign': 'center'}}>
+                    <img src={AntilopePath} style={CENTER} alt='Meeeehhh' />
+                </div>
         )
 
     }
 });
 
-React.render(<Meeeh />, document.getElementById("main"))
+
+let MainApp = React.createClass({
+    render(){
+        return (
+            <div>
+                <RouteHandler {...this.props} />
+            </div>
+        );
+    }
+});
+
+let routes = (
+  <Route handler={MainApp} path="/">
+    <Route handler={LoginScreen} name="loginScreen" path="login">
+    </Route>
+    <Route handler={ForceLogin} path="/">
+        <Route handler={Meeeh} name="home" path="/" />
+    </Route>
+  </Route>
+);
+
+
+run(routes, function (Handler) {
+  React.render(<Handler/>, document.body);
+});

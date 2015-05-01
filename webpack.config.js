@@ -14,6 +14,7 @@ module.exports = {
     path: 'assets/',
   },
 
+
   cache: true,
   debug: true,
   devtool: false,
@@ -33,6 +34,7 @@ module.exports = {
     }
   },
   module: {
+    noParse: /lie\.js$|\/leveldown\//,
     preLoaders: [{
       test: '\\.js$',
       exclude: 'node_modules',
@@ -42,8 +44,10 @@ module.exports = {
       test: /\.jsx$/,
       exclude: 'node_modules',
       loader: 'babel-loader?optional=runtime'
-    },
-    {
+    },{
+      test: /\.json/,
+      loader: 'json'
+    },{
       test: /\.less/,
       loader: 'style-loader!css-loader!less-loader'
     },{
@@ -74,7 +78,8 @@ module.exports = {
 
   devServer: {
     contentBase: "assets/",
-    proxy : {"/antelope/*": "http://127.0.0.1:5984/antelope/"},
+    proxy : {"/antelope/*": "http://127.0.0.1:5984/",
+             "/_session": "http://127.0.0.1:5984/_session" },
     progress: true,
     stats: {colors: true, }
   }
