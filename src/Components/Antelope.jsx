@@ -5,10 +5,11 @@ let AntilopePath = require("../assets/images/antilope.svg"),
               'margin': 'auto auto'};
 
 
+
 let Logo = React.createClass({
     render(){
       var styles = Object.assign({}, this.props);
-      return <img src={AntilopePath} style={styles} alt='Meeeehhh' />
+      return <img className="logo" src={AntilopePath} style={styles} alt='Meeeehhh' />
     }
 });
 

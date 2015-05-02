@@ -1,10 +1,12 @@
 // libs
-import {Grid, footer, Nav} from 'react-bootstrap'
+import {Grid, Navbar} from 'react-bootstrap'
 import {RouteHandler, Link} from "react-router"
 import React from 'react'
 
 // internals
 import sessionStore from '../stores/Session'
+import {Logo} from './Antelope'
+
 
 export default React.createClass({
   getInitialState(){
@@ -24,16 +26,16 @@ export default React.createClass({
   },
 
   renderNav(){
-    console.log(this.state);
     if (!this.state.hasSession){ return null };
-
-    return <Nav><p>Test</p></Nav>
+    return (<Navbar brand={<Logo />}></Navbar>)
   },
 
   render(){
     return (
       <div>
-        {this.renderNav()}
+        <header>
+          {this.renderNav()}
+        </header>
         <Grid fluid={true}>
           <RouteHandler {...this.props} />
         </Grid>
