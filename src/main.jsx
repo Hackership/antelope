@@ -5,29 +5,21 @@ import {Grid, Button} from "react-bootstrap"
 import React from "react"
 
 // internals
+import Layout from './Components/Layout'
 import {ForceLogin, LoginScreen} from "./Components/ForceLogin"
 import {Meeeh} from "./Components/Antelope"
 // import sessionStore from './stores/Session';
 // import sessionActions from './actions/Session';
 
+require('./styles/main.css')
 
-
-let MainApp = React.createClass({
-    render(){
-        return (
-            <Grid fluid={true}>
-                <RouteHandler {...this.props} />
-            </Grid>
-        );
-    }
-});
 
 let routes = (
-  <Route handler={MainApp} path="/">
+  <Route handler={Layout} path="/">
     <Route handler={LoginScreen} name="loginScreen" path="login">
     </Route>
     <Route handler={ForceLogin} path="/">
-        <Route handler={Meeeh} name="home" path="/" />
+      <Route handler={Meeeh} name="home" path="/" />
     </Route>
   </Route>
 );
