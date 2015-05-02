@@ -19,6 +19,7 @@ let ForceLogin = React.createClass({
         if (err || !resp.userCtx.name){
             transition.redirect('loginScreen');
         }
+        sessionActions.restoreSession(resp);
         callback();
       });
     }

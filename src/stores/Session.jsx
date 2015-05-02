@@ -6,8 +6,13 @@ import sessionActions from '../actions/Session';
 class SessionStore {
   constructor(){
     this.bindListeners({
-      login: sessionActions.login
+      login: sessionActions.login,
+      restoreSession: sessionActions.restoreSession,
     });
+  }
+
+  restoreSession(session){
+    this.setState({loaded: true, user: session.userCtx, loggedIn: !!session.userCtx.name})
   }
 
   login({username, password}){
@@ -17,7 +22,7 @@ class SessionStore {
       if (err) {
         this.setState({loaded: true, loggedIn: false, err: err})
       } else {
-        this.setState({loaded: true, loggedIn: true, user: response});
+        this.setState({loaded: true, loggedIn: true, user: response.userCtx});
       }
     });
   }
