@@ -1,36 +1,23 @@
 
 // libs
-let React = require("react"),
-    {Container, Button} = require("react-bootstrap"),
-    {Route, run, RouteHandler} = require("react-router");
+import {Route, run, RouteHandler} from "react-router"
+import {Grid, Button} from "react-bootstrap"
+import React from "react"
 
 // internals
 import {ForceLogin, LoginScreen} from "./Components/ForceLogin"
+import {Meeeh} from "./Components/Antelope"
 // import sessionStore from './stores/Session';
 // import sessionActions from './actions/Session';
 
-let AntilopePath = require("./assets/images/antilope.svg"),
-    CENTER = {'maxHeight': '100vh', 'maxWidth': '100vw',
-              'margin': 'auto auto'};
-
-let Meeeh = React.createClass({
-    render: function(){
-        return (
-                <div style={{'textAlign': 'center'}}>
-                    <img src={AntilopePath} style={CENTER} alt='Meeeehhh' />
-                </div>
-        )
-
-    }
-});
 
 
 let MainApp = React.createClass({
     render(){
         return (
-            <div>
+            <Grid fluid={true}>
                 <RouteHandler {...this.props} />
-            </div>
+            </Grid>
         );
     }
 });
