@@ -8,6 +8,7 @@ import React from "react"
 import Layout from './Components/Layout'
 import {ForceLogin, LoginScreen} from "./Components/ForceLogin"
 import {Meeeh} from "./Components/Antelope"
+import ShowDocs from "./Components/ShowDocs"
 // import sessionStore from './stores/Session';
 // import sessionActions from './actions/Session';
 
@@ -19,7 +20,7 @@ let routes = (
     <Route handler={LoginScreen} name="loginScreen" path="login">
     </Route>
     <Route handler={ForceLogin} path="/">
-      <Route handler={Meeeh} name="home" path="/" />
+      <Route handler={ShowDocs} name="home" path="/" />
     </Route>
   </Route>
 );
