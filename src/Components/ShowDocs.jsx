@@ -29,6 +29,9 @@ export default React.createClass({
   getInitialState() {
     return {docs: AllDocsStore.getState().docs, searchterm:""};
   },
+  componentWillMount(){
+    AllDocsStore.setup();
+  },
   componentDidMount() {
     AllDocsStore.listen(this.onChange)
   },
@@ -84,21 +87,28 @@ export default React.createClass({
     }
 
     return (
-      <Table striped bordered condensed hover>
-        <thead>
-          <tr>
+      <div>
+        <div>
             <Input type="search"
               addonBefore="Type to search:"
               value={this.state.searchterm}
               onChange={this.changeSearch}
               onKeyUp={this.onSearchKeyUp}
               placeholder="filename" />
-          </tr>
-        </thead>
-        <tbody>
-          {attachments}
-        </tbody>
-      </Table>
+        </div>
+        <Table striped bordered condensed hover>
+          <thead>
+            <tr>
+              <td>
+                Filename
+              </td>
+            </tr>
+          </thead>
+          <tbody>
+            {attachments}
+          </tbody>
+        </Table>
+      </div>
       )
   }
 });

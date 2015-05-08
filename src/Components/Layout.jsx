@@ -1,5 +1,5 @@
 // libs
-import {Grid, Navbar} from 'react-bootstrap'
+import {Grid, Navbar, Nav, DropdownButton, MenuItem} from 'react-bootstrap'
 import {RouteHandler, Link} from "react-router"
 import React from 'react'
 
@@ -27,7 +27,15 @@ export default React.createClass({
 
   renderNav(){
     if (!this.state.hasSession){ return null };
-    return (<Navbar brand={<Logo />}></Navbar>)
+    return (
+      <Navbar brand={<Logo />}>
+
+        <Nav right>
+          <DropdownButton eventKey={3} title='Tools'>
+            <MenuItem eventKey='1'><Link to="attachments">Attachments search</Link></MenuItem>
+          </DropdownButton>
+        </Nav>
+      </Navbar>)
   },
 
   render(){

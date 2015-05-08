@@ -13,16 +13,34 @@ import db from './Database';
 Debug.enable('store');
 
 class PouchStore {
-  constructor(view, key, readyFunc) {
+  constructor(view, key, autoSetup) {
     debug('constructor', arguments);
+
+    this.exportPublicMethods({
+        setup: this.setup
+    });
+
+    this._setup = false;
     this.docs = {};
     this.db = db;
-    this.setup({view, key, readyFunc});
+    this.view = view;
+    this.key = key;
+    if (autoSetup) {
+        this.setup();
+        this.setup = function() {};
+    } else {
+        this.exportPublicMethods({
+            setup: this.setup.bind(this)
+        });
+    }
   }
 
-  setup(args) {
-    var {view, key, readyFunc} = args,
-        self = this,
+  setup(view, key) {
+    if (this._setup) return;
+    this._setup = true;
+    var self = this,
+        view = view || this.view,
+        key = key || this.key,
         options = {
           since: 'now',
           live: true,
@@ -64,9 +82,7 @@ class PouchStore {
     } else {
       this.key = '_id';
     }
-    if(readyFunc) {
-        readyFunc();
-    }
+
   }
 
   onPut(doc) {

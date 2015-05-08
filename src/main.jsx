@@ -14,18 +14,20 @@ import ShowDocs from "./Components/ShowDocs"
 
 require('./styles/main.css')
 
+let appRoutes = [
+  <Route handler={Meeeh} name="home" path="/" />,
+  <Route handler={ShowDocs} name="attachments" path="/search" />
+]
 
-let routes = (
+
+run(
+  // these are just for wrapping around the app
   <Route handler={Layout} path="/">
     <Route handler={LoginScreen} name="loginScreen" path="login">
     </Route>
     <Route handler={ForceLogin} path="/">
-      <Route handler={ShowDocs} name="home" path="/" />
+      {appRoutes}
     </Route>
-  </Route>
-);
-
-
-run(routes, function (Handler) {
-  React.render(<Handler/>, document.body);
+  </Route>,
+  function (Handler) { React.render(<Handler/>, document.body);
 });
