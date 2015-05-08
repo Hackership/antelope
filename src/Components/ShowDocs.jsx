@@ -1,5 +1,6 @@
 import React from 'react';
 import AllDocsStore from '../stores/AllDocs';
+import {getAttachmentUrl} from "../utils/database";
 
 import _ from "underscore";
 
@@ -13,10 +14,11 @@ let Attachment = React.createClass({
 
     var {doc, name, attachment} = this.props,
         key = doc._id + "/" + name,
-        size = Math.round(attachment.length / 10240);
+        size = Math.round(attachment.length / 10240),
+        url = getAttachmentUrl(doc, name);
 
     return (
-      <span key={key} {...this.props}>{name} ({size}mb)</span>
+      <span key={key} {...this.props}><a target="_blank" href={url}>{name}</a> ({size}mb)</span>
       )
   }
 });
