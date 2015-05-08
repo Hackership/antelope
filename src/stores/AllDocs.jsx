@@ -3,7 +3,7 @@ import alt from '../alt';
 
 export default alt.createStore(class AllDocsStore extends PouchStore {
   constructor() {
-    super();
+    super('antelope/attachments');
     // this.bindActions(TodoActions)
   }
 });

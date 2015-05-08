@@ -1,11 +1,22 @@
 import React from 'react';
 import AllDocsStore from '../stores/AllDocs';
 
+import _ from "underscore";
 
-let SimpleDoc = React.createClass({
+
+let Attachment = React.createClass({
   render(){
+    // we expect :
+    //    - props.doc -> pouchdb document
+    //    - props.name -> name/id of the attachment in the doc
+    //    - props.attachment -> the attachment object
+
+    var {doc, name, attachment} = this.props,
+        key = doc._id + "/" + name,
+        size = Math.round(attachment.length / 10240);
+
     return (
-      <li>{this.props.doc._id}</li>
+      <span key={key} {...this.props}>{name} ({size}mb)</span>
       )
   }
 });
@@ -31,9 +42,16 @@ export default React.createClass({
     if (!this.state.docs){
       return <p>No Docs found</p>
     }
+
+    var attachments = _.flatten(_.map(_.pairs(this.state.docs), function([id, doc]){
+      return _.map(_.pairs(doc._attachments), function([name, a]){
+        return (<Attachment doc={doc} name={name} attachment={a} />)
+      })
+    }));
+    console.log(attachments);
     return (
       <ul>
-        {Object.keys(this.state.docs).map(x => <SimpleDoc key={x} doc={this.state.docs[x]} />)}
+        {attachments}
       </ul>
       )
   }

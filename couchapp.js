@@ -25,6 +25,14 @@ var couchapp = require('couchapp')
     }
   }
 
+  ddoc.views.attachments = {
+    map: function(doc) {
+      if(doc._attachments && doc._id[0] != "_") {
+        emit(doc._id, null);
+      }
+    }
+  }
+
   ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
     function require(field, message) {
       message = message || "Document must have a " + field;
