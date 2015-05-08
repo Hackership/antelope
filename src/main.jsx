@@ -9,6 +9,7 @@ import Layout from './Components/Layout'
 import {ForceLogin, LoginScreen} from "./Components/ForceLogin"
 import {Meeeh} from "./Components/Antelope"
 import ShowDocs from "./Components/FindAttachments"
+import Inbox from "./Components/Inbox"
 // import sessionStore from './stores/Session';
 // import sessionActions from './actions/Session';
 
@@ -16,6 +17,7 @@ require('./styles/main.css')
 
 let appRoutes = [
   <Route handler={Meeeh} name="home" path="/" />,
+  <Route handler={Inbox} name="inbox" path="/inbox" />,
   <Route handler={ShowDocs} name="attachments" path="/search" />
 ]
 

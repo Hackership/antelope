@@ -1,5 +1,5 @@
 import React from 'react';
-import AllDocsStore from '../stores/AllDocs';
+import InboxStore from '../stores/Inbox';
 import {getAttachmentUrl} from "../utils/database";
 import {Table, Alert, Input} from "react-bootstrap";
 import SimpleStoreListenMixin from "../utils/SimpleStoreListenMixin";
@@ -28,13 +28,13 @@ let Attachment = React.createClass({
 
 export default React.createClass({
   mixins: [SimpleStoreListenMixin],
-  store: AllDocsStore,
+  store: InboxStore,
   getInitialState() {
-    return {docs: AllDocsStore.getState().docs, searchterm:""};
+    return {docs: InboxStore.getState().docs, searchterm:""};
   },
 
   onChange() {
-    this.setState({docs: AllDocsStore.getState().docs});
+    this.setState({docs: InboxStore.getState().docs});
   },
 
   changeSearch(evt){

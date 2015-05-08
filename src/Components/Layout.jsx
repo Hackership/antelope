@@ -1,11 +1,29 @@
 // libs
-import {Grid, Navbar, Nav, DropdownButton, MenuItem} from 'react-bootstrap'
+import {Grid, Navbar, Nav, DropdownButton} from 'react-bootstrap'
+import {NavItemLink, MenuItemLink} from 'react-router-bootstrap'
 import {RouteHandler, Link} from "react-router"
+import SimpleStoreListenMixin from "../utils/SimpleStoreListenMixin";
+import InboxStore from '../stores/Inbox';
+
 import React from 'react'
+import _ from "underscore"
 
 // internals
 import sessionStore from '../stores/Session'
 import {Logo} from './Antelope'
+
+let InboxLink = React.createClass({
+  mixins: [SimpleStoreListenMixin],
+  store: InboxStore,
+  onChange(){
+    this.forceUpdate()
+  },
+  render(){
+    var count = _.keys(this.store.getState().docs).length;
+    return <NavItemLink to="inbox">Inbox ({count})</NavItemLink>;
+  }
+});
+
 
 
 export default React.createClass({
@@ -30,9 +48,13 @@ export default React.createClass({
     return (
       <Navbar brand={<Logo />}>
 
+        <Nav>
+          <InboxLink />
+        </Nav>
+
         <Nav right>
           <DropdownButton eventKey={3} title='Tools'>
-            <MenuItem eventKey='1'><Link to="attachments">Attachments search</Link></MenuItem>
+            <MenuItemLink eventKey='1' to="attachments">Attachments search</MenuItemLink>
           </DropdownButton>
         </Nav>
       </Navbar>)

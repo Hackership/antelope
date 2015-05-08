@@ -25,6 +25,14 @@ var couchapp = require('couchapp')
     }
   }
 
+  ddoc.views.inbox = {
+    map: function(doc){
+      if(doc.type === "x-email-inbound" || doc.type === 'inbox') {
+        emit(doc._id, doc._attachmenqts.length);
+      }
+    }
+  }
+
   ddoc.views.attachments = {
     map: function(doc) {
       if(doc._attachments && doc._id[0] != "_") {
@@ -39,8 +47,8 @@ var couchapp = require('couchapp')
       if (!newDoc[field]) throw({forbidden : message});
     };
 
-    if (newDoc.type == "person") {
-      require("name");
+    if (newDoc.type == "x-email-inbound") {
+      require("msg");
     }
   }
 

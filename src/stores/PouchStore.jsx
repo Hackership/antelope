@@ -25,6 +25,7 @@ class PouchStore {
     this.db = db;
     this.view = view;
     this.key = key;
+
     if (autoSetup) {
         this.setup();
         this.setup = function() {};
@@ -87,56 +88,47 @@ class PouchStore {
 
   onPut(doc) {
     debug('put', doc);
-    if(this.db) {
-      this.db.put(doc).then(function(result) {
-          debug('put result', result);
-      }).catch(function(err) {
-          debug('put error: ', err);
-      });
-    }
+    this.db.put(doc).then(function(result) {
+        debug('put result', result);
+    }).catch(function(err) {
+        debug('put error: ', err);
+    });
   }
 
   onUpdateAll(docs) {
     debug('update', docs);
-    if(this.db) {
-      if(Array.isArray(docs)){
-        for(var i = 0; i < docs.length; i++) {
-          var doc = docs[i];
-          debug('doc', doc);
-          var key = doc[this.key];
-          debug('key', key);
-          if(doc._deleted && key in this.docs) {
-            delete this.docs[key];
-          } else {
-            this.docs[key] = doc;
-          }
-        }
-      } else {
-        for(var key2 in this.docs) {
-          this.docs[key2] = merge(this.docs[key2], docs);
+    if(Array.isArray(docs)){
+      for(var i = 0; i < docs.length; i++) {
+        var doc = docs[i];
+        debug('doc', doc);
+        var key = doc[this.key];
+        debug('key', key);
+        if(doc._deleted && key in this.docs) {
+          delete this.docs[key];
+        } else {
+          this.docs[key] = doc;
         }
       }
-      debug('docs', this.docs);
-      this.emitChange();
+    } else {
+      for(var key2 in this.docs) {
+        this.docs[key2] = merge(this.docs[key2], docs);
+      }
     }
+    debug('docs', this.docs);
+    this.emitChange();
   }
 
   onRemove(doc) {
-    if(this.db) {
-      debug('remove', doc);
-      this.db.remove(doc).then(function(result) {
+    debug('remove', doc);
+    this.db.remove(doc).then(function(result) {
           debug('remove result', result);
-      }).catch(function(err) {
+    }).catch(function(err) {
           debug('remove error: ', err);
-      });
-    }
+    });
   }
 
   onSync(destination) {
-    debug('sync', this.name, destination);
-    if(this.db) {
-      PouchDB.sync(this.name, destination);
-    }
+    PouchDB.sync(this.name, destination);
   }
 }
 
