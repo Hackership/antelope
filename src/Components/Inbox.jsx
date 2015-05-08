@@ -4,7 +4,7 @@ import {getAttachmentUrl} from "../utils/database";
 import {Table, Alert, Input} from "react-bootstrap";
 import SimpleStoreListenMixin from "../utils/SimpleStoreListenMixin";
 import {Route} from "react-router"
-import Router from "react-router"
+
 import {NavItemLink} from "react-router-bootstrap"
 import _ from "underscore";
 

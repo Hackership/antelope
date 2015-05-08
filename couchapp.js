@@ -28,7 +28,7 @@ var couchapp = require('couchapp')
   ddoc.views.inbox = {
     map: function(doc){
       if(doc.type === "x-email-inbound" || doc.type === 'inbox') {
-        emit(doc._id, doc._attachmenqts.length);
+        emit(doc._id, doc._attachments.length);
       }
     }
   }
