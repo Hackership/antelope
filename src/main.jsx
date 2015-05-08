@@ -8,7 +8,7 @@ import React from "react"
 import Layout from './Components/Layout'
 import {ForceLogin, LoginScreen} from "./Components/ForceLogin"
 import {Meeeh} from "./Components/Antelope"
-import ShowDocs from "./Components/ShowDocs"
+import ShowDocs from "./Components/FindAttachments"
 // import sessionStore from './stores/Session';
 // import sessionActions from './actions/Session';
 
