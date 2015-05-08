@@ -1,26 +1,26 @@
+import React from "react"
 
 // libs
 import {Route, run, RouteHandler} from "react-router"
 import {Grid, Button} from "react-bootstrap"
-import React from "react"
+
 
 // internals
 import Layout from './Components/Layout'
 import {ForceLogin, LoginScreen} from "./Components/ForceLogin"
-import {Meeeh} from "./Components/Antelope"
-import ShowDocs from "./Components/FindAttachments"
-import Inbox from "./Components/Inbox"
+import AppStore from "./stores/App"
+import bootstrap from "./setup/_setup"
+
 // import sessionStore from './stores/Session';
 // import sessionActions from './actions/Session';
 
 require('./styles/main.css')
 
-let appRoutes = [
-  <Route handler={Meeeh} name="home" path="/" />,
-  <Route handler={Inbox} name="inbox" path="/inbox" />,
-  <Route handler={ShowDocs} name="attachments" path="/search" />
-]
+bootstrap();
 
+var appRoutes = AppStore.getState().routes;
+
+console.log(appRoutes);
 
 run(
   // these are just for wrapping around the app

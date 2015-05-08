@@ -3,7 +3,9 @@ import InboxStore from '../stores/Inbox';
 import {getAttachmentUrl} from "../utils/database";
 import {Table, Alert, Input} from "react-bootstrap";
 import SimpleStoreListenMixin from "../utils/SimpleStoreListenMixin";
-
+import {Route} from "react-router"
+import Router from "react-router"
+import {NavItemLink} from "react-router-bootstrap"
 import _ from "underscore";
 
 
@@ -26,7 +28,22 @@ let Attachment = React.createClass({
 });
 
 
-export default React.createClass({
+let InboxMenuItem = React.createClass({
+  mixins: [SimpleStoreListenMixin],
+  store: InboxStore,
+
+  onChange(){
+    this.forceUpdate()
+  },
+  render(){
+    var count = _.keys(this.store.getState().docs).length;
+    return <NavItemLink to="inbox">Inbox ({count})</NavItemLink>;
+  }
+});
+
+
+
+let InboxPage = React.createClass({
   mixins: [SimpleStoreListenMixin],
   store: InboxStore,
   getInitialState() {
@@ -105,3 +122,5 @@ export default React.createClass({
       )
   }
 });
+
+module.exports = {InboxPage: InboxPage, InboxMenuItem: InboxMenuItem}
