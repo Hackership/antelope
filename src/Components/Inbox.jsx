@@ -1,17 +1,74 @@
 import React from 'react';
 import InboxStore from '../stores/Inbox';
 import {getAttachmentUrl} from "../utils/database";
-import {Badge, Table, Alert, Input} from "react-bootstrap";
+import {Grid, Row, Col, Badge, Table, Alert, Input} from "react-bootstrap";
 import SimpleStoreListenMixin from "../utils/SimpleStoreListenMixin";
-import {Route} from "react-router"
+import {Route, Navigation, State} from "react-router"
 
 import {NavItemLink} from "react-router-bootstrap"
 import _ from "underscore";
 
 import Attachment from "./Attachment";
 
+let EmailHandler = React.createClass({
+  mixins: [State, SimpleStoreListenMixin],
+  store: InboxStore,
+  getDoc(){
+    return InboxStore.getState().docs[this.getParams().docId];
+  },
+  onChange(){
+    this.forceUpdate()
+  },
+  render(){
+    let doc = this.getDoc();
+
+    if (!doc){
+      return <span>Loading</span>
+    }
+
+    let msg = doc.msg,
+        actions = [];
+
+    return (<Grid>
+        <Row>
+          <Col>
+            <h2>From</h2>
+            {msg.from_name}
+            <br /><span className="emailAddress">{'<'}{msg.from_email}{'>'}</span>
+          </Col>
+          <Col>
+            <h2>To</h2>
+            {_.map(msg.to, t => <span>{t}</span>)}
+          </Col>
+        </Row>
+        <Row>
+          {actions}
+        </Row>
+        <Row>
+          {msg.text}
+        </Row>
+        <Row>
+          <h4>Attachments:</h4>
+          <ul>
+            {_.map(
+                _.pairs(doc._attachments),
+                  ([name, a]) =>
+                    <li><Attachment name={name} doc={doc} attachment={a} /></li>)}
+          </ul>
+        </Row>
+        <Row>
+          {actions}
+        </Row>
+      </Grid>)
+  }
+})
+
 
 let EmailRow = React.createClass({
+  mixins: [Navigation],
+  routeToEmail(){
+    this.transitionTo('inboxEmail', {docId: this.props.doc._id})
+  },
   render(){
     // we expect :
     //    - props.doc -> pouchdb document
@@ -22,7 +79,7 @@ let EmailRow = React.createClass({
         msg = doc.msg;
 
     return (
-      <tr key={doc._id}>
+      <tr onClick={this.routeToEmail} key={doc._id}>
         <td>{msg.from_name}
           <br /><span className="emailAddress">{'<'}{msg.from_email}{'>'}</span>
         </td>
@@ -147,4 +204,8 @@ let InboxPage = React.createClass({
   }
 });
 
-module.exports = {InboxPage: InboxPage, InboxMenuItem: InboxMenuItem}
+
+module.exports = {InboxPage: InboxPage,
+                  EmailHandler: EmailHandler,
+                  InboxMenuItem: InboxMenuItem}
+

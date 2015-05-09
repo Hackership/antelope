@@ -18,7 +18,8 @@ export default function(){
 
     ], x => x())
 
-    AppActions.addRoute(<Route handler={Meeeh} name="home" path="/" />)
+    AppActions.addAppItem('routes',
+        <Route handler={Meeeh} name="home" path="/" />)
 
 }
 

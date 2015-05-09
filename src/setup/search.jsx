@@ -8,6 +8,8 @@ import FindAttachment from "../Components/FindAttachments"
 
 
 export default function(){
-    AppActions.addRoute(<Route handler={FindAttachment} name="attachments" path="/search" />)
-    AppActions.addToolMenuItem(function() {return <MenuItemLink eventKey='1' to="attachments">Attachments search</MenuItemLink>})
+    AppActions.addAppItem('routes',
+        <Route handler={FindAttachment} name="attachments" path="/search" />)
+    AppActions.addAppItem('tools',
+        function() {return <MenuItemLink eventKey='1' to="attachments">Attachments search</MenuItemLink>})
 }

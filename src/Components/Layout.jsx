@@ -13,23 +13,6 @@ import _ from "underscore"
 import sessionStore from '../stores/Session'
 import {Logo} from './Antelope'
 
-let ContextWrap = React.createClass({
-
-  childContextTypes: {
-    router: React.PropTypes.func
-  },
-  getChildContext () {
-    console.log(this.context.router);
-    return {
-      router: this.context.router
-    }
-  },
-  render(){
-    return this.props.children[0];
-  }
-
-})
-
 export default React.createClass({
   getInitialState(){
     return {hasSession: sessionStore.getState().loggedIn,}
@@ -55,9 +38,7 @@ export default React.createClass({
 
   renderNav(){
     if (!this.state.hasSession){ return null };
-    console.log(AppStore.getState().menu, AppStore.getState().toolmenu)
-    _.map(AppStore.getState().menu, x => _.isFunction(x) ? x() : x)
-    _.map(AppStore.getState().toolmenu, x => _.isFunction(x) ? x() : x)
+
     return (
       <Navbar brand={<Logo />}>
 
@@ -67,7 +48,7 @@ export default React.createClass({
 
         <Nav right>
           <DropdownButton eventKey={3} title='Tools'>
-            {_.map(AppStore.getState().toolmenu, x => _.isFunction(x) ? x() : x)}
+            {_.map(AppStore.getState().tools, x => _.isFunction(x) ? x() : x)}
           </DropdownButton>
         </Nav>
       </Navbar>)
