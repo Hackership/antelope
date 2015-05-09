@@ -1,28 +1,40 @@
 import React from 'react';
 import InboxStore from '../stores/Inbox';
 import {getAttachmentUrl} from "../utils/database";
-import {Table, Alert, Input} from "react-bootstrap";
+import {Badge, Table, Alert, Input} from "react-bootstrap";
 import SimpleStoreListenMixin from "../utils/SimpleStoreListenMixin";
 import {Route} from "react-router"
 
 import {NavItemLink} from "react-router-bootstrap"
 import _ from "underscore";
 
+import Attachment from "./Attachment";
 
-let Attachment = React.createClass({
+
+let EmailRow = React.createClass({
   render(){
     // we expect :
     //    - props.doc -> pouchdb document
     //    - props.name -> name/id of the attachment in the doc
     //    - props.attachment -> the attachment object
 
-    var {doc, name, attachment} = this.props,
-        key = doc._id + "/" + name,
-        size = Math.round(attachment.length / 10240),
-        url = getAttachmentUrl(doc, name);
+    var doc = this.props.doc,
+        msg = doc.msg;
 
     return (
-      <span key={key} {...this.props}><a target="_blank" href={url}>{name}</a> ({size}mb)</span>
+      <tr key={doc._id}>
+        <td>{msg.from_name}
+          <br /><span className="emailAddress">{'<'}{msg.from_email}{'>'}</span>
+        </td>
+        <td>
+          {_.map(msg.to, t => <span>{t}</span>)}
+        </td>
+        <td>{msg.subject}</td>
+        <td>{_.map(
+              _.pairs(doc._attachments),
+                ([name, a]) =>
+                  <Attachment name={name} doc={doc} attachment={a} />)}</td>
+      </tr>
       )
   }
 });
@@ -37,7 +49,7 @@ let InboxMenuItem = React.createClass({
   },
   render(){
     var count = _.keys(this.store.getState().docs).length;
-    return <NavItemLink to="inbox">Inbox ({count})</NavItemLink>;
+    return <NavItemLink to="inbox">Inbox <Badge>{count}</Badge></NavItemLink>;
   }
 });
 
@@ -68,54 +80,66 @@ let InboxPage = React.createClass({
     evt.keyCode === 27 && this.cancelSearch();
   },
 
-  _getAttachments(){
-    var files = _.flatten(_.map(_.pairs(this.state.docs), function([id, doc]){
-      return _.map(_.pairs(doc._attachments), function([name, a]){
-        return {doc: doc, name: name, attachment: a};
-      })
-    }));
+  _getEmails(){
+    var emails = _.values(this.state.docs);
     if (this.state.searchterm) {
       var term = this.state.searchterm.toLowerCase();
-      return _.filter(files, x => x.name.toLowerCase().indexOf(term) > -1)
+      return _.filter(emails, x =>
+            x.msg.subject.toLowerCase().indexOf(term) > -1 ||
+            x.msg.from_name.toLowerCase().indexOf(term) > -1 ||
+            x.msg.from_email.toLowerCase().indexOf(term) > -1 ||
+            x.msg.text.toLowerCase().indexOf(term) > -1 ||
+            _.find(x.msg.to, t => (t[0].toLowerCase().indexOf(term) > -1 || (t[1] || "" ).toLowerCase().indexOf(term) > -1) )
+            )
     }
 
-    return files;
+    return emails;
   },
 
   render(){
     if (!this.state.docs){
-      return <p>No Docs found</p>
+      return <p>No Emails found</p>
     }
 
-    var attachments = _.map(this._getAttachments(),
-                            props => <tr><td><Attachment {...props} /></td></tr> );
+    var emails = this._getEmails();
 
-    if (!attachments.length){
-      attachments = (<tr><td><Alert bsStyle='warning'>
+    if (!emails.length){
+      emails = (<tr><td><Alert bsStyle='warning'>
         <p>No document matching the criteria found.</p>
         </Alert></td></tr>)
+    } else {
+      emails = _.map(emails, doc => <EmailRow doc={doc} />);
     }
 
     return (
       <div>
         <div>
             <Input type="search"
-              addonBefore="Type to search:"
+              addonBefore="find"
               value={this.state.searchterm}
               onChange={this.changeSearch}
               onKeyUp={this.onSearchKeyUp}
-              placeholder="filename" />
+              placeholder="email" />
         </div>
         <Table striped bordered condensed hover>
           <thead>
             <tr>
               <td>
-                Filename
+                From
+              </td>
+              <td>
+                To
+              </td>
+              <td>
+                Subject
+              </td>
+              <td>
+                Attachments
               </td>
             </tr>
           </thead>
           <tbody>
-            {attachments}
+            {emails}
           </tbody>
         </Table>
       </div>

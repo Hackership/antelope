@@ -3,28 +3,9 @@ import AllDocsStore from '../stores/AllDocs';
 import {getAttachmentUrl} from "../utils/database";
 import {Table, Alert, Input} from "react-bootstrap";
 import SimpleStoreListenMixin from "../utils/SimpleStoreListenMixin";
+import Attachment from "./Attachment"
 
 import _ from "underscore";
-
-
-let Attachment = React.createClass({
-  render(){
-    // we expect :
-    //    - props.doc -> pouchdb document
-    //    - props.name -> name/id of the attachment in the doc
-    //    - props.attachment -> the attachment object
-
-    var {doc, name, attachment} = this.props,
-        key = doc._id + "/" + name,
-        size = Math.round(attachment.length / 10240),
-        url = getAttachmentUrl(doc, name);
-
-    return (
-      <span key={key} {...this.props}><a target="_blank" href={url}>{name}</a> ({size}mb)</span>
-      )
-  }
-});
-
 
 export default React.createClass({
   mixins: [SimpleStoreListenMixin],
