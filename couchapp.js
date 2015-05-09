@@ -19,8 +19,18 @@ var couchapp = require('couchapp')
 
   ddoc.views.contacts = {
     map: function(doc) {
-      if(doc.type == 'contact') {
-        emit(doc.name, null);
+      if(doc.type === 'contact') {
+        emit(doc._id, null);
+      }
+    }
+  }
+
+  ddoc.views.contactsByEmail = {
+    map: function(doc) {
+      if(doc.type === 'contact' && doc.emails && doc.emails.length) {
+        for (var i=0; i < doc.emails.length; i++){
+          emit(doc.emails[i].email, doc.emails[i]);
+        }
       }
     }
   }

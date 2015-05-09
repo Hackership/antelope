@@ -5,6 +5,7 @@ import AppActions from "../actions/App"
 
 import inboxSetup from "./inbox";
 import searchSetup from "./search";
+import contactsSetup from "./contacts";
 
 import {Meeeh} from "../Components/Antelope";
 
@@ -14,6 +15,7 @@ export default function(){
     _.each([
 
         inboxSetup,
+        contactsSetup,
         searchSetup
 
     ], x => x())
