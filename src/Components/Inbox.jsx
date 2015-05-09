@@ -1,5 +1,6 @@
 import React from 'react';
 import InboxStore from '../stores/Inbox';
+import AppStore from '../stores/App';
 import {getAttachmentUrl} from "../utils/database";
 import {Grid, Row, Col, Badge, Table, Alert, Input} from "react-bootstrap";
 import SimpleStoreListenMixin from "../utils/SimpleStoreListenMixin";
@@ -27,25 +28,31 @@ let EmailHandler = React.createClass({
     }
 
     let msg = doc.msg,
-        actions = [];
+        actions = _.map((AppStore.getState().emailActions || []),
+                         e => React.createElement(e, {doc: doc, msg:msg}));
 
     return (<Grid>
         <Row>
-          <Col>
-            <h2>From</h2>
-            {msg.from_name}
-            <br /><span className="emailAddress">{'<'}{msg.from_email}{'>'}</span>
-          </Col>
-          <Col>
-            <h2>To</h2>
-            {_.map(msg.to, t => <span>{t}</span>)}
-          </Col>
+          <h2>{msg.subject}</h2>
         </Row>
         <Row>
           {actions}
         </Row>
         <Row>
-          {msg.text}
+          <Col md={6}>
+            <h3>To</h3>
+            {_.map(msg.to, t => <span>{t}</span>)}
+          </Col>
+          <Col md={6}>
+            <h3>From</h3>
+            {msg.from_name}
+            <br /><span className="emailAddress">{'<'}{msg.from_email}{'>'}</span>
+          </Col>
+        </Row>
+        <Row>
+          <pre>
+            {msg.text}
+          </pre>
         </Row>
         <Row>
           <h4>Attachments:</h4>
