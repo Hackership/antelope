@@ -82,6 +82,7 @@ let EmailRow = React.createClass({
     //    - props.name -> name/id of the attachment in the doc
     //    - props.attachment -> the attachment object
 
+    console.log(doc);
     var doc = this.props.doc,
         msg = doc.msg;
 
@@ -112,7 +113,7 @@ let InboxMenuItem = React.createClass({
     this.forceUpdate()
   },
   render(){
-    var count = _.keys(this.store.getState().collection).length;
+    var count = this.store.getState().collection.length;
     return <NavItemLink to="inbox">Inbox <Badge>{count}</Badge></NavItemLink>;
   }
 });
@@ -166,6 +167,8 @@ let InboxPage = React.createClass({
     }
 
     var emails = this._getEmails();
+
+    console.log(emails);
 
     if (!emails.length){
       emails = (<tr><td><Alert bsStyle='warning'>

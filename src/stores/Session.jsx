@@ -1,6 +1,7 @@
 import alt from '../alt';
 import db from './Database';
 import sessionActions from '../actions/Session';
+import databaseActions from "../actions/Database";
 
 
 class SessionStore {
@@ -11,8 +12,23 @@ class SessionStore {
     });
   }
 
+  _listenForChanges(){
+    window.setTimeout(function(){
+      db.changes({
+          since: 'now',
+          live: true,
+          include_docs: true
+        }).on('change', function(change) {
+          if(change.doc) {
+            databaseActions.documentUpdated(change.doc);
+          }
+      });
+    }, 1);
+  }
+
   restoreSession(session){
     this.setState({loaded: true, user: session.userCtx, loggedIn: !!session.userCtx.name})
+    this._listenForChanges();
   }
 
   login({username, password}){
@@ -23,6 +39,7 @@ class SessionStore {
         this.setState({loaded: true, loggedIn: false, err: err})
       } else {
         this.setState({loaded: true, loggedIn: true, user: response.userCtx});
+        this._listenForChanges();
       }
     });
   }

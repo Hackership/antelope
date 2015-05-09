@@ -11,11 +11,11 @@ export default React.createClass({
   mixins: [SimpleStoreListenMixin],
   store: AllDocsStore,
   getInitialState() {
-    return {docs: AllDocsStore.getState().docs, searchterm:""};
+    return {collection: AllDocsStore.getState().collection, searchterm:""};
   },
 
   onChange() {
-    this.setState({docs: AllDocsStore.getState().docs});
+    this.forceUpdate();
   },
 
   changeSearch(evt){
@@ -33,9 +33,10 @@ export default React.createClass({
   },
 
   _getAttachments(){
-    var files = _.flatten(_.map(this.state.docs, function(doc){
-      return _.map(_.pairs(doc._attachments), function([name, a]){
-        return {doc: doc, name: name, attachment: a};
+    console.log(this.state.collection);
+    var files = _.flatten(this.state.collection.map(function(doc){
+      return _.map(_.pairs(doc.get("_attachments")), function([name, a]){
+        return {doc: doc.attributes, name: name, attachment: a};
       })
     }));
     if (this.state.searchterm) {
@@ -47,7 +48,7 @@ export default React.createClass({
   },
 
   render(){
-    if (!this.state.docs){
+    if (!this.state.collection){
       return <p>No Docs found</p>
     }
 
