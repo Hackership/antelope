@@ -33,7 +33,7 @@ export default React.createClass({
   },
 
   _getAttachments(){
-    var files = _.flatten(_.map(_.pairs(this.state.docs), function([id, doc]){
+    var files = _.flatten(_.map(this.state.docs, function(doc){
       return _.map(_.pairs(doc._attachments), function([name, a]){
         return {doc: doc, name: name, attachment: a};
       })

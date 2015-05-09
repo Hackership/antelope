@@ -10,6 +10,8 @@
   "mainInput": "main",
   "mainOutput": "main",
   "dependencies": {
+    "backbone-collection": "^1.0.6",
+    "backbone-model": "^1.0.6",
     "couchapp": "^0.11.0",
     "moment": "^2.9.0",
     "pouchdb": "^3.4.0",

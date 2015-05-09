@@ -15,7 +15,7 @@ let EmailHandler = React.createClass({
   mixins: [State, SimpleStoreListenMixin],
   store: InboxStore,
   getDoc(){
-    return InboxStore.getState().docs[this.getParams().docId];
+    return (InboxStore.getState().collection.get(this.getParams().docId) || {}).attributes;
   },
   onChange(){
     this.forceUpdate()
@@ -112,7 +112,7 @@ let InboxMenuItem = React.createClass({
     this.forceUpdate()
   },
   render(){
-    var count = _.keys(this.store.getState().docs).length;
+    var count = _.keys(this.store.getState().collection).length;
     return <NavItemLink to="inbox">Inbox <Badge>{count}</Badge></NavItemLink>;
   }
 });
@@ -123,11 +123,11 @@ let InboxPage = React.createClass({
   mixins: [SimpleStoreListenMixin],
   store: InboxStore,
   getInitialState() {
-    return {docs: InboxStore.getState().docs, searchterm:""};
+    return {collection: InboxStore.getState().collection, searchterm:""};
   },
 
   onChange() {
-    this.setState({docs: InboxStore.getState().docs});
+    this.setState({collection: InboxStore.getState().collection});
   },
 
   changeSearch(evt){
@@ -145,15 +145,15 @@ let InboxPage = React.createClass({
   },
 
   _getEmails(){
-    var emails = _.values(this.state.docs);
+    var emails = this.state.collection.models;
     if (this.state.searchterm) {
       var term = this.state.searchterm.toLowerCase();
       return _.filter(emails, x =>
-            x.msg.subject.toLowerCase().indexOf(term) > -1 ||
-            x.msg.from_name.toLowerCase().indexOf(term) > -1 ||
-            x.msg.from_email.toLowerCase().indexOf(term) > -1 ||
-            x.msg.text.toLowerCase().indexOf(term) > -1 ||
-            _.find(x.msg.to, t => (t[0].toLowerCase().indexOf(term) > -1 || (t[1] || "" ).toLowerCase().indexOf(term) > -1) )
+            x.attributes.msg.subject.toLowerCase().indexOf(term) > -1 ||
+            x.attributes.msg.from_name.toLowerCase().indexOf(term) > -1 ||
+            x.attributes.msg.from_email.toLowerCase().indexOf(term) > -1 ||
+            x.attributes.msg.text.toLowerCase().indexOf(term) > -1 ||
+            _.find(x.attributes.msg.to, t => (t[0].toLowerCase().indexOf(term) > -1 || (t[1] || "" ).toLowerCase().indexOf(term) > -1) )
             )
     }
 
@@ -161,7 +161,7 @@ let InboxPage = React.createClass({
   },
 
   render(){
-    if (!this.state.docs){
+    if (!this.state.collection){
       return <p>No Emails found</p>
     }
 
@@ -172,7 +172,7 @@ let InboxPage = React.createClass({
         <p>No document matching the criteria found.</p>
         </Alert></td></tr>)
     } else {
-      emails = _.map(emails, doc => <EmailRow doc={doc} />);
+      emails = _.map(emails, doc => <EmailRow doc={doc.attributes} />);
     }
 
     return (

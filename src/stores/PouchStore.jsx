@@ -4,8 +4,12 @@
 // originally licenced under APL
 // https://github.com/olafura/PouchFlux/blob/master/src/stores/PouchStore.js
 
-var merge = require('object-assign');
-var Debug = require('debug');
+import merge from 'object-assign';
+import Debug from 'debug';
+import Model from "../models/BaseModel";
+import {Collection} from 'backbone-collection';
+
+
 var debug = Debug('store');
 
 import db from './Database';
@@ -13,7 +17,7 @@ import db from './Database';
 Debug.enable('store');
 
 class PouchStore {
-  constructor(view, key, autoSetup) {
+  constructor({view, key, autoSetup, rawView}) {
     debug('constructor', arguments);
 
     this.exportPublicMethods({
@@ -21,10 +25,12 @@ class PouchStore {
     });
 
     this._setup = false;
-    this.docs = {};
+    this.collection = this._createCollection();
+    this.docs = this.collection; // backwards compatibility
     this.db = db;
     this.view = view;
     this.key = key;
+    this.rawView = rawView;
 
     if (autoSetup) {
         this.setup();
@@ -36,12 +42,27 @@ class PouchStore {
     }
   }
 
-  setup(view, key) {
+  _createCollection(){
+    if (this.backboneCollection){
+      return new this.backboneCollection;
+    }
+    return new (Collection.extend({
+      model: (this.backboneModel || Model)
+    }));
+  }
+
+  setup({view, key, rawView}) {
     if (this._setup) return;
     this._setup = true;
+
+    this.collection.on("all", function(){
+      this.emitChange();
+    }.bind(this));
+
     var self = this,
         view = view || this.view,
         key = key || this.key,
+        rawView = rawView || this.rawView,
         options = {
           since: 'now',
           live: true,
@@ -50,8 +71,7 @@ class PouchStore {
         triggerChanges = function(result){
           debug('result', result);
           if(result && result.rows) {
-            var newrows = result.rows.map(function(row){return row.doc;});
-            self.onUpdateAll(newrows);
+            self.collection.reset(rawView ? result.rows : result.rows.map(row => row.doc));
           }
           return result;
         },
@@ -61,9 +81,9 @@ class PouchStore {
             window.setTimeout(function(){
                 self.changes = self.db.changes(options).on('change', function(change) {
                     debug('changes change', change);
-                    var doc = change.doc;
+                    var doc = rawView ? change : change.doc;
                     if(doc) {
-                      self.onUpdateAll([doc]);
+                      self.collection.add(doc, {merge:true});
                     }
                 });
             }, 1)
@@ -93,29 +113,6 @@ class PouchStore {
     }).catch(function(err) {
         debug('put error: ', err);
     });
-  }
-
-  onUpdateAll(docs) {
-    debug('update', docs);
-    if(Array.isArray(docs)){
-      for(var i = 0; i < docs.length; i++) {
-        var doc = docs[i];
-        debug('doc', doc);
-        var key = doc[this.key];
-        debug('key', key);
-        if(doc._deleted && key in this.docs) {
-          delete this.docs[key];
-        } else {
-          this.docs[key] = doc;
-        }
-      }
-    } else {
-      for(var key2 in this.docs) {
-        this.docs[key2] = merge(this.docs[key2], docs);
-      }
-    }
-    debug('docs', this.docs);
-    this.emitChange();
   }
 
   onRemove(doc) {
