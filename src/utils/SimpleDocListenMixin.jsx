@@ -1,6 +1,9 @@
 import DatabaseActions from "../actions/Database";
 import db from "../stores/Database";
 import {Model} from "backbone-model";
+import alt from '../alt';
+
+import _ from "underscore";
 
 class DocumentStore {
   constructor(key) {
@@ -18,18 +21,21 @@ class DocumentStore {
   }
 }
 
-function makeStore(id){
-    return alt.createStore(class DocStore extends DocumentStore {
+function getStore(id){
+  let docStoreId =  "DOCStore_" + id;
+  return alt.getStore(docStoreId) || alt.createStore(
+    class DocStore extends DocumentStore {
       constructor() {
         super(id);
       }
-    }, "DOCStore_" + id, false);
+    }, docStoreId, false);
 }
 
 export default {
   componentWillMount(){
-    this.store = makeStore(this.props._id || this._getStoreId())
-
+    this.store = getStore(this.props._id ||
+          (_.isFunction(this._getStoreId) ? this._getStoreId() : '') ||
+          (_.isFunction(this.getParams) ? this.getParams().docId : ''))
   },
   componentDidMount() {
     this.store.listen(this._storeRefreshed)

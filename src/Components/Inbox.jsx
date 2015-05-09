@@ -4,6 +4,7 @@ import AppStore from '../stores/App';
 import {getAttachmentUrl} from "../utils/database";
 import {Grid, Row, Col, Badge, Table, Alert, Input} from "react-bootstrap";
 import SimpleStoreListenMixin from "../utils/SimpleStoreListenMixin";
+import SimpleDocListenMixin from "../utils/SimpleDocListenMixin";
 import {Route, Navigation, State} from "react-router"
 
 import {NavItemLink} from "react-router-bootstrap"
@@ -12,22 +13,18 @@ import _ from "underscore";
 import Attachment from "./Attachment";
 
 let EmailHandler = React.createClass({
-  mixins: [State, SimpleStoreListenMixin],
-  store: InboxStore,
-  getDoc(){
-    return (InboxStore.getState().collection.get(this.getParams().docId) || {}).attributes;
-  },
+  mixins: [State, SimpleDocListenMixin],
+
   onChange(){
     this.forceUpdate()
   },
   render(){
-    let doc = this.getDoc();
-
-    if (!doc){
+    if (this.store.getState().loading){
       return <span>Loading</span>
     }
 
-    let msg = doc.msg,
+    let doc = this.store.getState().model.attributes,
+        msg = doc.msg,
         actions = _.map((AppStore.getState().emailActions || []),
                          e => React.createElement(e, {doc: doc, msg:msg}));
 
@@ -82,7 +79,6 @@ let EmailRow = React.createClass({
     //    - props.name -> name/id of the attachment in the doc
     //    - props.attachment -> the attachment object
 
-    console.log(doc);
     var doc = this.props.doc,
         msg = doc.msg;
 
