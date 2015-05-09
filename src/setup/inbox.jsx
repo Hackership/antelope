@@ -2,7 +2,6 @@ import React from "react"
 
 import {Route} from "react-router"
 import AppActions from "../actions/App"
-import Routewrapper from "../utils/Routewrapper"
 
 import {InboxPage, EmailHandler, InboxMenuItem} from "../Components/Inbox"
 
