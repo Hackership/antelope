@@ -8,6 +8,7 @@ class DocumentStore {
   constructor(key) {
     this.loading = true;
     this.failed = false;
+    this.saving = false;
     this.key = key;
     this.doc = {};
 
@@ -18,13 +19,23 @@ class DocumentStore {
     this.fetch(true);
   }
 
+  saveDoc(doc){
+    this.setState({saving: true, err: false});
+    return db.put(doc).then(function(x)
+      this.setState({saving: false});
+    }.bind(this)).catch( err =>
+      this.setState({saving: false, failed: err})
+    );
+  }
+
   fetch(force){
     if (this.loading && !force) return
 
     db.get(this.key
       ).then(function(doc) {
-        this.setState({doc: doc, stale: false,
-                       loading: false, failed: false});
+        this.setState({doc: doc,
+                       loading: false,
+                       failed: false});
       }.bind(this)).catch(err =>
         this.setState({loading: false, failed: err})
       );
