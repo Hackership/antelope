@@ -4,7 +4,7 @@ import React from "react"
 import {Grid, Navbar, Nav, DropdownButton} from 'react-bootstrap'
 import {NavItemLink, MenuItemLink} from 'react-router-bootstrap'
 import {RouteHandler, Link} from "react-router"
-import SimpleStoreListenMixin from "../utils/SimpleStoreListenMixin";
+import SimpleStoreListenMixin from "./SimpleStoreListenMixin";
 import AppStore from '../stores/App';
 
 import _ from "underscore"

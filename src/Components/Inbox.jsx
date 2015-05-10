@@ -3,8 +3,8 @@ import InboxStore from '../stores/Inbox';
 import AppStore from '../stores/App';
 import {getAttachmentUrl} from "../utils/database";
 import {Grid, Row, Col, Badge, Table, Alert, Input} from "react-bootstrap";
-import SimpleStoreListenMixin from "../utils/SimpleStoreListenMixin";
-import SimpleDocListenMixin from "../utils/SimpleDocListenMixin";
+import LoadingDocumentMixin from "./LoadingDocumentMixin";
+import SimpleStoreListenMixin from "./SimpleStoreListenMixin";
 import {Route, Navigation, State} from "react-router"
 
 import {NavItemLink} from "react-router-bootstrap"
@@ -13,18 +13,10 @@ import _ from "underscore";
 import Attachment from "./Attachment";
 
 let EmailHandler = React.createClass({
-  mixins: [State, SimpleDocListenMixin],
+  mixins: [State, LoadingDocumentMixin],
 
-  onChange(){
-    this.forceUpdate()
-  },
-  render(){
-    if (this.store.getState().loading){
-      return <span>Loading</span>
-    }
-
-    let doc = this.store.getState().doc,
-        msg = doc.msg,
+  _render(doc){
+    let msg = doc.msg,
         actions = _.map((AppStore.getState().emailActions || []),
                          e => React.createElement(e, {doc: doc, msg:msg}));
 

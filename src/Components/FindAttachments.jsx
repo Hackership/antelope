@@ -2,7 +2,7 @@ import React from 'react';
 import AllDocsStore from '../stores/AllDocs';
 import {getAttachmentUrl} from "../utils/database";
 import {Table, Alert, Input} from "react-bootstrap";
-import SimpleStoreListenMixin from "../utils/SimpleStoreListenMixin";
+import SimpleStoreListenMixin from "./SimpleStoreListenMixin";
 import Attachment from "./Attachment"
 
 import _ from "underscore";
