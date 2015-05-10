@@ -1,9 +1,5 @@
 'use strict';
 
-// Based on olafura's PouchStore:
-// originally licenced under APL
-// https://github.com/olafura/PouchFlux/blob/master/src/stores/PouchStore.js
-
 import Model from "../models/BaseModel";
 import {Collection} from 'backbone-collection';
 
@@ -73,27 +69,6 @@ class DBViewStore {
           });
   }
 
-  // onPut(doc) {
-  //   debug('put', doc);
-  //   this.db.put(doc).then(function(result) {
-  //       debug('put result', result);
-  //   }).catch(function(err) {
-  //       debug('put error: ', err);
-  //   });
-  // }
-
-  // onRemove(doc) {
-  //   debug('remove', doc);
-  //   this.db.remove(doc).then(function(result) {
-  //         debug('remove result', result);
-  //   }).catch(function(err) {
-  //         debug('remove error: ', err);
-  //   });
-  // }
-
-  // onSync(destination) {
-  //   PouchDB.sync(this.name, destination);
-  // }
 }
 
 module.exports = DBViewStore;
