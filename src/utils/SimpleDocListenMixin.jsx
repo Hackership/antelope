@@ -1,6 +1,5 @@
-import DatabaseActions from "../actions/Database";
 import db from "../stores/Database";
-import {Model} from "backbone-model";
+import DatabaseActions from "../actions/Database";
 import alt from '../alt';
 
 import _ from "underscore";
@@ -10,14 +9,22 @@ class DocumentStore {
     this.loading = true;
     this.failed = false;
     this.key = key;
-    this.model = new Model();
+    this.doc = {};
     db.get(key
       ).then(function(doc) {
-        this.model.set(doc);
-        this.setState({loading: false, failed: false});
+        this.setState({doc: doc, loading: false, failed: false});
       }.bind(this)).catch(err =>
         this.setState({loading: false, failed: err})
       );
+
+    this.bindListeners({
+      documentUpdated: DatabaseActions.documentUpdated
+    });
+  }
+
+  documentUpdated(doc){
+    if (doc._id != this.key) return
+    this.setState({doc: doc});
   }
 }
 

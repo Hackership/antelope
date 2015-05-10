@@ -23,7 +23,7 @@ let EmailHandler = React.createClass({
       return <span>Loading</span>
     }
 
-    let doc = this.store.getState().model.attributes,
+    let doc = this.store.getState().doc,
         msg = doc.msg,
         actions = _.map((AppStore.getState().emailActions || []),
                          e => React.createElement(e, {doc: doc, msg:msg}));
