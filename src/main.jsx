@@ -15,7 +15,8 @@ import bootstrap from "./setup/_setup"
 // import sessionStore from './stores/Session';
 // import sessionActions from './actions/Session';
 
-require('./styles/main.css')
+require('react-select/dist/default.css');
+require('./styles/main.css');
 
 bootstrap();
 

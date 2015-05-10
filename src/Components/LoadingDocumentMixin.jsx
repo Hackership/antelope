@@ -13,6 +13,10 @@ export default {
     this.store.listen(this._storeRefreshed)
   },
 
+  saveDoc(doc){
+    this.store.saveDoc(doc);
+  },
+
   render(){
     let state = this.store.getState();
 

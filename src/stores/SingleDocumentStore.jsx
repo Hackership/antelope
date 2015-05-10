@@ -16,12 +16,27 @@ class DocumentStore {
       documentUpdated: DatabaseActions.documentUpdated
     });
 
+
+    this.exportPublicMethods({
+      fetch: this.fetch.bind(this),
+      saveDoc: this.saveDoc.bind(this),
+      createDoc: this.createDoc.bind(this)
+    });
+
     this.fetch(true);
+  }
+
+  createDoc(doc){
+    return db.post(doc).then(function(x){
+      this.setState({saving: false});
+    }.bind(this)).catch( err =>
+      this.setState({saving: false, failed: err})
+    );
   }
 
   saveDoc(doc){
     this.setState({saving: true, err: false});
-    return db.put(doc).then(function(x)
+    return db.put(doc).then(function(x){
       this.setState({saving: false});
     }.bind(this)).catch( err =>
       this.setState({saving: false, failed: err})

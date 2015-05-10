@@ -1,6 +1,6 @@
 'use strict';
 
-import Model from "../models/BaseModel";
+import {Model} from 'backbone-model';
 import {Collection} from 'backbone-collection';
 
 import db from './Database';
@@ -45,6 +45,7 @@ class DBViewStore {
 
     this.db.query(this.view, {include_docs: true}
           ).then(function(result){
+            console.log(result);
             if(result && result.rows) {
               self.collection.reset(self.rawView ? result.rows : result.rows.map(row => row.doc));
             }

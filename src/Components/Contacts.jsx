@@ -3,71 +3,127 @@ import React from 'react';
 import ContactsByEmailStore from '../stores/ContactsByEmail';
 import ContactsStore from '../stores/Contacts';
 import {getAttachmentUrl} from "../utils/database";
-import {Modal, Table, ModalTrigger, Badge, Button, Alert, Input} from "react-bootstrap";
+import {Grid, Row, Col, TabbedArea, TabPane, Modal, Table, ModalTrigger, Badge, Button, Alert, Input} from "react-bootstrap";
 import SimpleStoreListenMixin from "./SimpleStoreListenMixin";
 import LoadingDocumentMixin from "./LoadingDocumentMixin";
 import {Route, Navigation, State} from "react-router"
-
+import Select from 'react-select';
 import {NavItemLink} from "react-router-bootstrap"
 import _ from "underscore";
 
 import Attachment from "./Attachment";
 
-// let DocContactRow = React.createClass({
-//   mixins: [LoadingDocumentMixin],
 
-//   render(){
-//     var contact = this.props.contact.type;
-//     return <li>{contact.email} ({contact.type})</li>
-//   },
-//   switchIntoEdit(){
-//     this.setState({edit: true, contact: this.props.contact});
-//   },
-//   handleChanged(){
-//     this.props.onChanged(this.state.contact);
-//   },
-// })
+let ContactSelect = React.createClass({
+  mixins: [SimpleStoreListenMixin],
+  store: ContactsStore,
+  onChange: function(){
+    this.forceUpdate();
+  },
+  getSelection(){
+    return this.refs.select.state.value;
+  },
+  render(){
+    let options = ContactsStore.getState().collection.map(function(c){
+                        return { value: c.get("_id"),
+                          label: (c.get("name") || c.get("emails")[0].email)
+                        }})
+    if (!options.length){
+      return <span><em>No contacts in Database yet</em></span>;
+    }
+    return <Select
+            name="contact"
+            ref="select"
+            searchable={true}
+            options={options}
+            {... this.props.value}
+            />
+  }
+})
 
-// let ManageContactsButton = React.createClass({
-//   mixins: [SimpleStoreListenMixin],
-//   store: ContactsByEmailStore,
+let ContactSelector = React.createClass({
+  mixins: [State, LoadingDocumentMixin],
+  createNew(evt){
+    evt.preventDefault();
+    var new_doc = {'type': 'contact'};
+    if (this.refs.name.getValue()){
+      new_doc.name = this.refs.name.getValue();
+    }
 
-//   onChange(){
-//     this.forceUpdate()
-//     console.log("DOCS", this.store.getState().docs);
-//   },
-//   _existingContacts(){
-//     return (this.props.doc.contacts || []);
-//   },
-//   render(){
-//     let currentContacts = this._existingContacts(),
-//         modal = (
-//           <Modal bsStyle='primary' title='Modal heading' animation={false}>
-//             <div className='modal-body'>
-//               <h4>Manage Contacts</h4>
-//               <ul>
-//                 {_.map(this._existingContacts(), c => <DocContactRow {...c} />)}
-//               </ul>
-//             </div>
-//             <div className='modal-footer'>
-//               <Button onClick={this.props.onRequestHide}>Close</Button>
-//             </div>
-//           </Modal>);
+    if (this.refs.emails){
+      // email selector
+      new_doc.emails = _.map(this.refs.emails.state.values, function(e){ return {email: e.value}})
+    } else if (this.refs.email) {
+      let val = this.refs.email.getValue();
+      if (val) new_doc.emails = [{email: val}]
+    }
+    this.store.createDoc(new_doc).then(x => this.selectContact(x.id))
+  },
+  submitExisting(evt){
+    evt.preventDefault();
+    if (!this.refs.existingContact.getSelection()) return;
+    this.selectContact(this.refs.existingContact.getSelection());
+  },
+  selectContact(id){
+    this.props.onSelect(id);
+  },
+  _render(){
+    let emailsSelector = this.props.foundEmails ?
+          <Select
+              name="email"
+              ref="emails"
+              multi={true}
+              delimiter=','
+              options={_.map(this.props.foundEmails, function(e){return{value: e, label: e}})}
+            /> : <Input type="email" ref="email" />,
+      prefound = this.props.foundEmails ? _.map(
+                    ContactsStore.getState().collection.filter(
+                          c => _.find( c.get("emails"),
+                              e => _.contains(this.props.foundEmails, e.email)
+                              )
+                          ),
+                      c => <Button onClick={a=>this.selectContact(c.get("_id"))}>{c.get("name") || c.get("emails")[0].email }</Button>) : null;
 
-//   return (
-//       <ModalTrigger modal={modal}>
-//         <Button bsStyle='default' bsSize='normal'>Contacts <Badge>{currentContacts.length}</Badge></Button>
-//       </ModalTrigger>
-//     );
-//   }
-// });
+    return (
+      <TabbedArea>
+        <TabPane eventKey={1} tab='Existing'>
+          <Grid fluid>
+            <Row>
+              {prefound}
+              {this.props.children}
+            </Row>
+            <Row>
+              <form onSubmit={this.submitExisting}>
+                <Col md={9}>
+                  <ContactSelect ref="existingContact" onChange={this.selectContact} />
+                </Col>
+                <Col md={3}>
+                  <Button disabled={this.store.getState().saving} bsStyle="primary" type="submit">{this.props.selectLabel || "Select"}</Button>
+                </Col>
+              </form>
+            </Row>
+          </Grid>
+        </TabPane>
+        <TabPane eventKey={2} tab='Create New'>
+          <h3>Create New Contact</h3>
+          <form onSubmit={this.createNew}>
+            <Input type="text" ref="name" label="Name" required />
+            {emailsSelector}
+            <Button disabled={this.store.getState().saving} bsStyle="primary" type="submit">Create</Button>
+          </form>
+        </TabPane>
+      </TabbedArea>
+    );
+  }
+})
+
 
 let ContactPage = React.createClass({
-    mixins: [State, LoadingDocumentMixin],
-    _render(){
-      let doc = this.store.getsState().doc;
+  mixins: [State, LoadingDocumentMixin],
+  _render(){
+    let doc = this.store.getsState().doc;
 
-    }
+  }
 })
 
 let ContactRow = React.createClass({
@@ -176,6 +232,8 @@ let ContactsPage = React.createClass({
 });
 
 module.exports = {ContactsPage: ContactsPage,
+    ContactSelector: ContactSelector,
+    ContactSelect: ContactSelect
   // ManageContactsButton: ManageContactsButton
 }
 
