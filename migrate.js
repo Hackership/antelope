@@ -52,7 +52,7 @@ db.migrate(function(doc){
   if (changed) return [doc];
 
 }).then(function(){
-  console.log("All went fine, hurray!");
+  console.log("Migrations all went fine, hurray!");
 })
 
 
