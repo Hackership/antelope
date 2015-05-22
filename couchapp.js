@@ -6,6 +6,7 @@ var couchapp = require('couchapp')
     , views: {}
     , lists: {}
     , shows: {}
+    , updates: {}
   }
 
   module.exports = ddoc;
@@ -50,6 +51,25 @@ var couchapp = require('couchapp')
       }
     }
   }
+
+  // sequence generator
+  ddoc.updates.nextSequence = function(doc, req) {
+    if (!doc) {
+      doc = {
+        _id: req.id,
+        type: 'sequence',
+        version: 1,
+        count: 0
+      };
+    }
+    doc.count++;
+    var count = "" + doc.count;
+    if (doc.padLeft){
+      count = doc.padLeft.substring(count.length) + count;
+    }
+    return [doc, toJSON((doc.prefix || '') + count)];
+  }
+
 
   ddoc.validate_doc_update = function (newDoc, oldDoc, userCtx) {
     function require(field, message) {
