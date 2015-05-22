@@ -13,6 +13,23 @@ import _ from "underscore";
 
 let emailRegExp = /([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)/gi;
 
+let InvoiceReferences = React.createClass({
+  render(){
+    let invoices = this.props.refs.invoice;
+
+    console.log(this.props);
+    if (!invoices) return null;
+
+
+    return (<div>
+      <h3>Invoices</h3>
+      <ul>
+        {_.map(invoices, i => <li>{i.getState().doc.created_at}</li>)}
+      </ul>
+    </div>);
+  }
+})
+
 let MakeInvoiceButton = React.createClass({
   mixins: [Navigation],
 
@@ -60,4 +77,5 @@ let MakeInvoiceButton = React.createClass({
 
 export default {
   MakeInvoiceButton: MakeInvoiceButton,
+  InvoiceReferences: InvoiceReferences,
 }

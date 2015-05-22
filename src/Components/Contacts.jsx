@@ -3,6 +3,7 @@ import React from 'react';
 import ContactsByEmailStore from '../stores/ContactsByEmail';
 import ContactsStore from '../stores/Contacts';
 import {getAttachmentUrl} from "../utils/database";
+import AppStore from '../stores/App';
 import {Grid, Row, Col, TabbedArea, TabPane, Modal, Table, ModalTrigger, Badge, Button, Alert, Input} from "react-bootstrap";
 import SimpleStoreListenMixin from "./SimpleStoreListenMixin";
 import LoadingDocumentMixin from "./LoadingDocumentMixin";
@@ -121,8 +122,14 @@ let ContactSelector = React.createClass({
 let ContactPage = React.createClass({
   mixins: [State, LoadingDocumentMixin],
   _render(){
-    let doc = this.store.getsState().doc;
-
+    let doc = this.store.getState().doc,
+        refs = this.store.getState().refs,
+        refItems = _.map((AppStore.getState().contactReferences || []),
+                          e => React.createElement(e, {doc: doc, refs:refs}));
+    return (<div>
+          <h1>{doc.name}</h1>
+          {refItems}
+          </div>);
   }
 })
 
@@ -131,6 +138,11 @@ let ContactRow = React.createClass({
   // routeToEmail(){
   //   this.transitionTo('inboxEmail', {docId: this.props.doc._id})
   // },
+
+  routeToContact: function(){
+    this.transitionTo('contact', {docId: this.props.contact._id});
+  },
+
   render(){
 
     var contact = this.props.contact;
@@ -233,7 +245,8 @@ let ContactsPage = React.createClass({
 
 module.exports = {ContactsPage: ContactsPage,
     ContactSelector: ContactSelector,
-    ContactSelect: ContactSelect
+    ContactSelect: ContactSelect,
+    ContactPage: ContactPage,
   // ManageContactsButton: ManageContactsButton
 }
 
