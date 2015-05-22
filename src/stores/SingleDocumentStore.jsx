@@ -4,13 +4,24 @@ import alt from '../alt';
 
 import _ from "underscore";
 
+function getDocumentStore(id, bootstrap){
+  let docStoreId =  "DOCStore_" + id;
+  return alt.getStore(docStoreId) || alt.createStore(
+    class DocStore extends DocumentStore {
+      constructor() {
+        super(id, bootstrap);
+      }
+    }, docStoreId, false);
+}
+
 class DocumentStore {
-  constructor(key) {
-    this.loading = true;
+  constructor(key, bootstrap) {
+    this.loading = !bootstrap;
     this.failed = false;
     this.saving = false;
     this.key = key;
-    this.doc = {};
+    this.doc = bootstrap || {};
+    this.refs = {};
 
     this.bindListeners({
       documentUpdated: DatabaseActions.documentUpdated
@@ -23,7 +34,7 @@ class DocumentStore {
       createDoc: this.createDoc.bind(this)
     });
 
-    this.fetch(true);
+    if (!bootstrap) this.fetch(true);
   }
 
   createDoc(doc){
@@ -46,9 +57,18 @@ class DocumentStore {
   fetch(force){
     if (this.loading && !force) return
 
-    db.get(this.key
-      ).then(function(doc) {
+    db.query('antelope/with-references',
+             {startkey:[this.key, 0],
+              endkey: [this.key, 99],
+              include_docs: true}
+      ).then(function(results) {
+        var doc = results["rows"][0]["doc"],
+            refs = _.mapObject(
+                      _.groupBy(results["rows"].slice(1), r => r.doc.type),
+                      l => _.map(l, d => getDocumentStore(d.id, d.doc)));
+        console.log(doc, refs);
         this.setState({doc: doc,
+                       refs: refs,
                        loading: false,
                        failed: false});
       }.bind(this)).catch(err =>
@@ -62,12 +82,4 @@ class DocumentStore {
   }
 }
 
-export default function getDocumentStore(id){
-  let docStoreId =  "DOCStore_" + id;
-  return alt.getStore(docStoreId) || alt.createStore(
-    class DocStore extends DocumentStore {
-      constructor() {
-        super(id);
-      }
-    }, docStoreId, false);
-}
+export default getDocumentStore;
