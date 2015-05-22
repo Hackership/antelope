@@ -3,7 +3,13 @@ var couchapp = require('couchapp')
 
   ddoc = {
       _id: '_design/antelope'
-    , views: {}
+    , views: {
+      lib: {
+        referenceMap: "module.exports = " + JSON.stringify({
+          "invoice" : ["recipient"]
+        })
+      }
+    }
     , lists: {}
     , shows: {}
     , updates: {}
@@ -48,6 +54,24 @@ var couchapp = require('couchapp')
     map: function(doc) {
       if(doc._attachments && doc._id[0] != "_") {
         emit(doc._id, null);
+      }
+    }
+  }
+
+  ddoc.views['with-references'] = {
+    map: function(doc){
+      var rMap = require("views/lib/referenceMap");
+      emit([doc._id, 0, doc.type, null, doc.updated_at, doc.created_at], {_id: doc._id});
+
+      if (doc.type && rMap[doc.type]){
+        var attrs = rMap[doc.type];
+        for (var i=0; i < attrs.length ; i++){
+          var key = attrs[i],
+              refId = doc[key];
+          if (refId) {
+            emit([refId, 1, doc.type, key, doc.updated_at, doc.created_at], {_id: doc._id});
+          }
+        }
       }
     }
   }
