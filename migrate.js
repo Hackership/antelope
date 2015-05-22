@@ -10,30 +10,47 @@ var db = new PouchDB(process.argv[2]),
     now = (new Date()).toJSON();
 
 
-// we load all migrations in here
-var migrations = {};
-
-
-//
-//  Start migrations
-//
-
-// Migrate our contacts!
-migrations.contact = {};
-migrations.contact[0] = function(doc){
-  //
-  doc.created_at = now;
-  doc.created_at = now;
-  doc.created_by = null;
-  doc.updated_by = null;
-}
-
-
-//
-//  Careful with code hereafter!
-//
-
 db.migrate(function(doc){
+
+  // we load all migrations in here
+  var migrations = {};
+
+
+  //
+  //  Start migrations
+  //
+
+  // Migrate our contacts!
+  migrations.contact = {};
+  migrations.contact[0] = function(doc){
+    //
+    doc.created_at = now;
+    doc.created_at = now;
+    doc.created_by = null;
+    doc.updated_by = null;
+  }
+
+  migrations.contact[1] = function(doc){
+    //
+    doc.updated_at = now;
+  }
+
+
+  // Migrate our invoices!
+  migrations.invoice = {};
+  migrations.invoice[0] = function(doc){
+    //
+    doc.created_at = now;
+    doc.updated_at = now;
+    doc.created_by = null;
+    doc.updated_by = null;
+  }
+
+
+  //
+  //  Careful with code hereafter!
+  //
+
   var changed = false;
   if (doc.type){
     if (!doc.version){
