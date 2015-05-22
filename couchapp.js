@@ -77,6 +77,12 @@ var couchapp = require('couchapp')
       if (!newDoc[field]) throw({forbidden : message});
     };
 
+    if (newDoc._deleted && userCtx.roles.indexOf('_admin') === -1) {
+      throw({
+        forbidden: 'Only admins may delete user docs.'
+      })
+    }
+
     if (newDoc.type == "x-email-inbound") {
       require("msg");
     }
