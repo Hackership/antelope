@@ -15,7 +15,7 @@ let Wizzard = React.createClass({
       '_id': 'SETTINGS',
       'name': this.refs['name'].getValue(),
       'address': this.refs['address'].getValue()
-    });
+    }, true);
   },
 
   render(){

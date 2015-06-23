@@ -37,10 +37,10 @@ class DocumentStore {
     if (!bootstrap) this.fetch(true);
   }
 
-  createDoc(doc){
+  createDoc(doc, refetch){
     return db.post(doc).then(function(x){
       this.setState({saving: false});
-      this.fetch(true);
+      refetch && this.fetch(true);
     }.bind(this)).catch( err =>
       this.setState({saving: false, failed: err})
     );
