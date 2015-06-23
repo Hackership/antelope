@@ -103,7 +103,7 @@ var couchapp = require('couchapp')
 
     if (newDoc._deleted && userCtx.roles.indexOf('_admin') === -1) {
       throw({
-        forbidden: 'Only admins may delete user docs.'
+        forbidden: 'Only admins may delete docs.'
       })
     }
 
