@@ -17,9 +17,7 @@ let InvoiceReferences = React.createClass({
   render(){
     let invoices = this.props.refs.invoice;
 
-    console.log(this.props);
     if (!invoices) return null;
-
 
     return (<div>
       <h3>Invoices</h3>
