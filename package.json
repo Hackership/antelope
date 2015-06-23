@@ -14,7 +14,7 @@
     "backbone-model": "^1.0.6",
     "couchapp": "^0.11.0",
     "moment": "^2.9.0",
-    "pouchdb": "^3.4.0",
+    "pouchdb": "^3.6.0",
     "pouchdb-authentication": "^0.3.7",
     "pouchdb-migrate": "^1.0.1",
     "react": "^0.13.2",
