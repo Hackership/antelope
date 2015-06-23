@@ -5,7 +5,7 @@ import {Navigation} from 'react-router';
 
 import {ContactSelector} from "./Contacts";
 import SimpleStoreListenMixin from "./SimpleStoreListenMixin";
-import getDocumentStore from "../stores/SingleDocumentStore";
+import {getDocumentStore} from "../stores/SingleDocumentStore";
 import ContactsStore from '../stores/Contacts';
 import deepcopy from "../utils/deepcopy";
 

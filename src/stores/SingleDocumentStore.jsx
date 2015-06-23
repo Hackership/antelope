@@ -40,6 +40,7 @@ class DocumentStore {
   createDoc(doc){
     return db.post(doc).then(function(x){
       this.setState({saving: false});
+      this.fetch(true);
     }.bind(this)).catch( err =>
       this.setState({saving: false, failed: err})
     );
@@ -82,4 +83,4 @@ class DocumentStore {
   }
 }
 
-export default getDocumentStore;
+module.exports = {getDocumentStore: getDocumentStore, DocumentStore: DocumentStore};

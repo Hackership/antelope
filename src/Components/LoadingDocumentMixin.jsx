@@ -1,13 +1,15 @@
 import React from 'react'
-import getStore from "../stores/SingleDocumentStore"
+import {getDocumentStore} from "../stores/SingleDocumentStore"
 
 import _ from "underscore"
 
 export default {
   componentWillMount(){
-    this.store = getStore(this.props._id ||
+    this.store = _.isFunction(this._getStore) ? this._getStore() : (
+        getDocumentStore(this.props._id ||
           (_.isFunction(this._getStoreId) ? this._getStoreId() : '') ||
           (_.isFunction(this.getParams) ? this.getParams().docId : ''))
+        )
   },
   componentDidMount() {
     this.store.listen(this._storeRefreshed)
