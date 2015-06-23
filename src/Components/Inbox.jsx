@@ -101,8 +101,10 @@ let InboxMenuItem = React.createClass({
     this.forceUpdate()
   },
   render(){
-    var count = this.store.getState().collection.length;
-    return <NavItemLink to="inbox">Inbox <Badge>{count}</Badge></NavItemLink>;
+    let count = this.store.getState().collection.length,
+        badge = count ? <Badge>{count}</Badge> : false;
+
+    return <NavItemLink to="inbox">Inbox {badge}</NavItemLink>;
   }
 });
 
