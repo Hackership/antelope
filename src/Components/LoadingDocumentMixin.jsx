@@ -1,5 +1,6 @@
 import React from 'react'
 import {getDocumentStore} from "../stores/SingleDocumentStore"
+import {SettingsStore} from "../stores/SettingsStore"
 
 import _ from "underscore"
 
@@ -13,6 +14,9 @@ export default {
   },
   componentDidMount() {
     this.store.listen(this._storeRefreshed)
+    if (this.WITH_SETTINGS){
+      SettingsStore.listen(this._storeRefreshed)
+    }
   },
 
   saveDoc(doc){
@@ -42,5 +46,8 @@ export default {
 
   componentWillUnmount() {
     this.store.unlisten(this._storeRefreshed)
+    if (this.WITH_SETTINGS){
+      SettingsStore.unlisten(this._storeRefreshed)
+    }
   },
 }
