@@ -1,5 +1,5 @@
 
-import {Well, Row, Col, Button, Input} from "react-bootstrap"
+import {Well, Row, Col, Button, Input, Alert} from "react-bootstrap"
 import {RouteHandler, Navigation} from "react-router"
 import React from "react"
 
@@ -33,6 +33,9 @@ let ForceLogin = React.createClass({
 
 let LoginScreen = React.createClass({
   mixins: [Navigation],
+  getInitialState(){
+    return {'error': null}
+  },
   componentDidMount() {
     sessionStore.listen(this.onChange)
   },
@@ -45,6 +48,8 @@ let LoginScreen = React.createClass({
     let session = sessionStore.getState();
     if (session.loggedIn){
       this.transitionTo("home")
+    } else if (session.err){
+      this.setState({error: session.err});
     }
   },
 
@@ -53,20 +58,21 @@ let LoginScreen = React.createClass({
   },
 
   render: function (argument) {
-      return (
-        <Row style={{marginTop: "20vh"}}>
-          <Col xs={12} sm={6} smOffset={3}>
-            <Well>
-              <form onSubmit={this.login}>
-                <h2><Logo margin='0 0.5em' maxWidth='1em' maxHeight='1em' display='inline' />Login Required</h2>
-                <p>Please provide your login information</p>
-                <Input bsStyle="inline" label="Username" type="input" ref="username" required />
-                <Input bsStyle="inline"  label="Password" type="password" ref="password" required />
-                <Button bsStyle="primary" type='submit'>Login</Button>
-              </form>
-            </Well>
-          </Col>
-        </Row>)
+    var message = this.state.error ? <Alert bsStyle="danger"><strong>Login Failed: {this.state.error.name}</strong><br/>{this.state.error.message}</Alert> : <p>Please provide your login information</p>;
+    return (
+      <Row style={{marginTop: "20vh"}}>
+        <Col xs={12} sm={6} smOffset={3}>
+          <Well>
+            <form onSubmit={this.login}>
+              <h2><Logo margin='0 0.5em' maxWidth='1em' maxHeight='1em' display='inline' />Login Required</h2>
+              {message}
+              <Input bsStyle="inline" label="Username" type="input" ref="username" required />
+              <Input bsStyle="inline"  label="Password" type="password" ref="password" required />
+              <Button bsStyle="primary" type='submit'>Login</Button>
+            </form>
+          </Well>
+        </Col>
+      </Row>)
   }
 
 });
