@@ -20,12 +20,19 @@ var couchapp = require('couchapp')
   ddoc.views.byType = {
     map: function(doc) {
       emit(doc.type, null);
+    }
+  }
+
+
+  ddoc.views.countByType = {
+    map: function(doc) {
+      emit(doc.type, null);
     },
     reduce: '_count'
   }
 
   ddoc.views.contacts = {
-    map: function(doc) {
+    map: function(doc) {=
       if(doc.type === 'contact') {
         emit(doc._id, null);
       }
