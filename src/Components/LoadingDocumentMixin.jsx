@@ -24,6 +24,9 @@ export default {
     if (state.loading) return <span>Loading</span>;
 
     if (state.failed){
+      if (this._render_failed){
+        return this._render_failed(state.failed);
+      }
       console.log(state.failed);
       return <span>Failed</span>;
     }

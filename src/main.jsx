@@ -9,6 +9,7 @@ import {Grid, Button} from "react-bootstrap"
 // internals
 import Layout from './Components/Layout'
 import {ForceLogin, LoginScreen} from "./Components/ForceLogin"
+import {ForceSettings} from "./Components/ForceSettings"
 import AppStore from "./stores/App"
 import bootstrap from "./setup/_setup"
 
@@ -26,7 +27,9 @@ run(
     <Route handler={LoginScreen} name="loginScreen" path="login">
     </Route>
     <Route handler={ForceLogin} path="/">
-      {_.flatten(_.map(AppStore.getState().routes, x => _.isFunction(x) ? x() : x))}
+      <Route handler={ForceSettings} path="/">
+        {_.flatten(_.map(AppStore.getState().routes, x => _.isFunction(x) ? x() : x))}
+      </Route>
     </Route>
   </Route>,
   function (Handler) { React.render(<Handler/>, document.body);
