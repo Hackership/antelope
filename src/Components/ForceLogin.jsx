@@ -3,13 +3,10 @@ import {Well, Row, Col, Button, Input, Alert} from "react-bootstrap"
 import {RouteHandler, Navigation} from "react-router"
 import React from "react"
 
-
 import db from "../stores/Database"
 import {Logo} from "./Antelope"
 import sessionActions from "../actions/Session"
 import sessionStore from "../stores/Session"
-
-
 
 let ForceLogin = React.createClass({
   statics: {
