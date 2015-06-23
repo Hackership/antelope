@@ -7,6 +7,7 @@ import inboxSetup from "./inbox";
 import searchSetup from "./search";
 import contactsSetup from "./contacts";
 import invoiceSetup from "./invoices";
+import sequencesSetup from "./sequences";
 
 import {Meeeh} from "../Components/Antelope";
 
@@ -18,7 +19,8 @@ export default function(){
         inboxSetup,
         contactsSetup,
         searchSetup,
-        invoiceSetup
+        invoiceSetup,
+        sequencesSetup
 
     ], x => x())
 

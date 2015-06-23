@@ -4,9 +4,10 @@ import {Model} from 'backbone-model';
 import {Collection} from 'backbone-collection';
 
 import db from './Database';
+import _ from "underscore";
 
 class DBViewStore {
-  constructor({view, autoSetup, rawView}) {
+  constructor({view, autoSetup, rawView, params}) {
 
     this._setup = false;
     this.collection = this._createCollection();
@@ -14,6 +15,7 @@ class DBViewStore {
     this.db = db;
     this.view = view;
     this.rawView = rawView;
+    this.params = params || {};
 
     if (autoSetup) {
         this.setup();
@@ -30,7 +32,7 @@ class DBViewStore {
       return new this.backboneCollection;
     }
     return new (Collection.extend({
-      model: (this.backboneModel || Model)
+      model: (this.backboneModel || Model.extend({idAttribute: '_id'}))
     }));
   }
 
@@ -43,9 +45,8 @@ class DBViewStore {
       this.emitChange();
     }.bind(this));
 
-    this.db.query(this.view, {include_docs: true}
+    this.db.query(this.view, _.extend({}, this.params, {include_docs: true})
           ).then(function(result){
-            console.log(result);
             if(result && result.rows) {
               self.collection.reset(self.rawView ? result.rows : result.rows.map(row => row.doc));
             }
